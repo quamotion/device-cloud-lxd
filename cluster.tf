@@ -39,37 +39,30 @@ resource "lxd_profile" "cluster_profile" {
       path = "/"
     }
   }
+
+  config {
+    security.privileged = "true"
+    user.vendor-data = "${file("vendor-data")}"
+  }
 }
 
 resource "lxd_container" "pxe" {
   name      = "pxe"
-  image     = "images:ubuntu/xenial/amd64"
+  image     = "ubuntu:18.04"
   ephemeral = false
   profiles  = ["${lxd_profile.cluster_profile.name}"]
-
-  config {
-    security.privileged = "true"
-  }
 }
 
 resource "lxd_container" "master" {
   name      = "master"
-  image     = "images:ubuntu/xenial/amd64"
+  image     = "ubuntu:18.04"
   ephemeral = false
   profiles  = ["${lxd_profile.cluster_profile.name}"]
-
-  config {
-    security.privileged = "true"
-  }
 }
 
 resource "lxd_container" "node" {
   name      = "node"
-  image     = "images:ubuntu/xenial/amd64"
+  image     = "ubuntu:18.04"
   ephemeral = false
   profiles  = ["${lxd_profile.cluster_profile.name}"]
-
-  config {
-    security.privileged = "true"
-  }
 }

@@ -1,0 +1,8 @@
+#cloud-config
+users:
+- name: deployer
+  ssh-authorized-keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/pnEa89dkMIQ4bkaSwChtz3S8TbTuAT403XHmXJGD1B3nuZlaLtrgZbYlPgCb21qghsLT/qfGUkbcxY5670SZQQBFUlzI+FBWnPGiFA9dDMQ3dCqEbLN7+cvv7o0mGNPpX28+xdiV2ihdshVF5B3DHp0sRNjASf5WFwAUzXdYP0gOhDe2V/vwKyZ4RanxyvnCfhyJmkoDdCvqM1ulMuMRACRQrlwp1PmG8E9VCi31f8bps7ZzDSjKnj/NO7zV+TOKOxGKWtjsa6IF2BG1QHACarDEZB96faGCBZjxcKe9c+IRI70VUWfHZlaHgyaqqdgaY2sCb99Jn9UNwnbhRuJv pipelines@dev.azure.com
+  shell: /bin/bash
+  sudo: ['ALL=(ALL) NOPASSWD:ALL']
+  groups: sudo
