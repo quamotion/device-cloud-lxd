@@ -1,0 +1,46 @@
+jobs:
+- job: build
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - script: |
+      # Downlaod and unzip Terraform
+      wget https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
+      unzip terraform_0.11.11_linux_amd64.zip
+
+      # Move Terraform to a folder which is in $PATH
+      sudo mv terraform /usr/local/bin/
+
+      # Debug output
+      which terraform
+      terraform version
+    displayName: Install Terraform
+  - script: |
+      # Download and unzip the lxd plugin
+      wget https://github.com/sl1pm4t/terraform-provider-lxd/releases/download/v1.1.3/terraform-provider-lxd_v1.1.3_linux_amd64.zip
+      unzip terraform-provider-lxd_v1.1.3_linux_amd64.zip
+
+      # Copy binary to a location where Terraform will find it
+      mkdir -p ~/.terraform.d/plugins
+      mv terraform-provider-lxd* ~/.terraform.d/plugins
+
+      # This will list plugins, too
+      terraform version
+    displayName: Install terraform-provider-lxd plugin
+  - script: |
+      sudo apt install -t xenial-backports lxd lxd-client lxd-tools
+      
+      sudo adduser $(whoami) lxd
+      sudo systemctl start lxd
+
+      # Debug output
+      lxd --version
+      systemctl status lxd
+    displayName: Install lxd
+  - script: |
+       systemctl status lxd
+
+       terraform init
+       terraform plan
+       sudo terraform apply -auto-approve
+    displayName: Apply plan
