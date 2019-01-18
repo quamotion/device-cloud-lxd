@@ -1,0 +1,8 @@
+---
+
+- name: Wait for all nodes to come online
+  hosts: all
+  gather_facts: false
+  tasks:
+  - wait_for_connection:
+      timeout: 300

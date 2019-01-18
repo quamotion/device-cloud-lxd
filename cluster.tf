@@ -1,3 +1,4 @@
+# Create the cluster network and storage
 resource "lxd_network" "cluster_network" {
   name = "cluster_network"
 
@@ -17,6 +18,7 @@ resource "lxd_storage_pool" "cluster_storage_pool" {
   }
 }
 
+# Create the container profiles and images
 resource "lxd_profile" "cluster_profile" {
   name = "cluster_profile"
 
@@ -42,7 +44,7 @@ resource "lxd_profile" "cluster_profile" {
 
   config {
     security.privileged = "true"
-    user.vendor-data = "${file("vendor-data")}"
+    user.vendor-data = "${file("${path.module}/vendor-data")}"
   }
 }
 
@@ -60,9 +62,27 @@ resource "lxd_container" "master" {
   profiles  = ["${lxd_profile.cluster_profile.name}"]
 }
 
-resource "lxd_container" "node" {
-  name      = "node"
+resource "lxd_container" "worker" {
+  name      = "worker"
   image     = "ubuntu:18.04"
   ephemeral = false
   profiles  = ["${lxd_profile.cluster_profile.name}"]
+}
+
+# Create the Ansible inventory file
+data "template_file" "inventory" {
+  template = "${file("${path.module}/inventory.tpl")}"
+
+  vars {
+    deployer_user = "${var.deployer_user}"
+    deployer_user_key_file = "${path.module}/${var.deployer_user_key_file}"
+    pxe_ip = "${lxd_container.pxe.ip_address}"
+    master_ip = "${lxd_container.master.ip_address}"
+    worker_ip = "${lxd_container.worker.ip_address}"
+  }
+}
+
+resource "local_file" "inventory" {
+    content = "${data.template_file.inventory.rendered}"
+    filename = "${path.module}/inventory"
 }

@@ -44,3 +44,5 @@ jobs:
        terraform plan
        sudo terraform apply -auto-approve
     displayName: Apply plan
+  - script: |
+       make deploy

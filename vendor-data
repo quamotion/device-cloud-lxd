@@ -6,3 +6,10 @@ users:
   shell: /bin/bash
   sudo: ['ALL=(ALL) NOPASSWD:ALL']
   groups: sudo
+packages:
+- openssh-server
+- ca-certificates
+- curl
+- apt-transport-https
+- software-properties-common
+- python-minimal
